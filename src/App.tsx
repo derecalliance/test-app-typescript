@@ -1,45 +1,48 @@
-import React, { useEffect, useState } from 'react';
-import { DeRecShare } from '@derecalliance/lib-typescript';
-import { DeRecSharerStatus } from '@derecalliance/lib-typescript'; // Import DeRecSharerStatus class
-import { SecretId } from '@derecalliance/lib-typescript'; // Import SecretId class
+import React, { useEffect } from 'react';
+import { DeRecShare, DeRecSharerStatus, SecretId, DeRecIdentity } from '@derecalliance/lib-typescript';
 
-const App: React.FC = () => {
-  // State to store the result from DeRecShare
-  const [result, setResult] = useState<any>(null);
+const TestComponent: React.FC = () => {
+    useEffect(() => {
+        const createIdentity = async () => {
+            try {
+                // Ensure DeRecSharerStatus receives a DeRecIdentity
+                const mockIdentity = await DeRecIdentity.create(
+                    "John Doe",               // name
+                    "john.doe@example.com",    // contact
+                    "someAddress",             // address (can be null if no address)
+                    123,                       // publicEncryptionKeyId
+                    "base64EncodedPublicKey",  // publicEncryptionKey (replace with actual base64 string)
+                    "base64EncodedSigKey"     // publicSignatureKey (optional, can be null)
+                ); // Ensure this is correctly instantiated
+                const mockSharerStatus = new DeRecSharerStatus(mockIdentity);
 
-  useEffect(() => {
-    const testDeRecShare = async () => {
-      try {
-        // Example: Create instances of DeRecSharerStatus and SecretId
-        const sharerStatus = new DeRecSharerStatus(/* pass necessary arguments */);
-        const secretId = new SecretId(/* pass necessary arguments */);
-        const versions = [1, 2, 3]; // Example version numbers
+                // Convert string to Uint8Array for SecretId
+                const secretString = "dummy-secret-id";
+                const secretBytes = new TextEncoder().encode(secretString);
+                const mockSecretId = new SecretId(secretBytes);
 
-        // Initialize DeRecShare with the required arguments
-        const deRecShareInstance = new DeRecShare(sharerStatus, secretId, versions);
+                const versionNumbers = [1, 2, 3];
 
-        // Example: Call a method from DeRecShare (adjust based on the available methods)
-        const response = deRecShareInstance.getVersions();
+                // Instantiate DeRecShare correctly
+                const deRecShareInstance = new DeRecShare(mockSharerStatus, mockSecretId, versionNumbers);
 
-        // Log the result or set it in the state
-        console.log('DeRecShare Response:', response);
-        setResult(response); // Store the response in state
-      } catch (error) {
-        console.error("Error with DeRecShare:", error);
-      }
-    };
+                // Log outputs
+                console.log("Sharer Status:", deRecShareInstance.getSharer());
+                console.log("Secret ID:", deRecShareInstance.getSecretId());
+                console.log("Versions:", deRecShareInstance.getVersions());
+                console.log("Remove status (before):", deRecShareInstance.remove());
+                console.log("Remove status (after):", deRecShareInstance.remove()); // Should return false now
 
-    // Call the function on component mount
-    testDeRecShare();
-  }, []); // Empty dependency array to run on component mount
+            } catch (error) {
+                console.error("Error initializing DeRecShare:", error);
+            }
+        };
 
-  return (
-    <div>
-      <h1>Test DeRecShare</h1>
-      <p>Result: {result ? JSON.stringify(result) : 'Loading...'}</p>
-    </div>
-  );
+        createIdentity();
+    }, []);
+
+    return <div>Check the console for DeRecShare test results.</div>;
 };
 
-export default App;
+export default TestComponent;
 
