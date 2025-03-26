@@ -1,6 +1,7 @@
-// App.tsx
 import React, { useEffect, useState } from 'react';
-import { DeRecShare } from '@derecalliance/lib-typescript/dist/DeRecShare.js'; // Import DeRecShare
+import { DeRecShare } from '@derecalliance/lib-typescript';
+import { DeRecSharerStatus } from '@derecalliance/lib-typescript'; // Import DeRecSharerStatus class
+import { SecretId } from '@derecalliance/lib-typescript'; // Import SecretId class
 
 const App: React.FC = () => {
   // State to store the result from DeRecShare
@@ -9,12 +10,16 @@ const App: React.FC = () => {
   useEffect(() => {
     const testDeRecShare = async () => {
       try {
-        // Initialize DeRecShare or call a method from it
-        const deRecShareInstance = new DeRecShare();
+        // Example: Create instances of DeRecSharerStatus and SecretId
+        const sharerStatus = new DeRecSharerStatus(/* pass necessary arguments */);
+        const secretId = new SecretId(/* pass necessary arguments */);
+        const versions = [1, 2, 3]; // Example version numbers
 
-        // Call a method from DeRecShare (adjust this according to actual methods available)
-        // Example: const response = await deRecShareInstance.someMethod();
-        const response = await deRecShareInstance.someMethod(); // Replace with actual method name
+        // Initialize DeRecShare with the required arguments
+        const deRecShareInstance = new DeRecShare(sharerStatus, secretId, versions);
+
+        // Example: Call a method from DeRecShare (adjust based on the available methods)
+        const response = deRecShareInstance.getVersions();
 
         // Log the result or set it in the state
         console.log('DeRecShare Response:', response);
@@ -37,3 +42,4 @@ const App: React.FC = () => {
 };
 
 export default App;
+
