@@ -1,31 +1,39 @@
-import React, { useState } from "react";
-import { DeRecHelperStatus } from '@derecalliance/lib-typescript/dist/DeRecHelperStatus.js';
-import { DeRecIdentity } from '@derecalliance/lib-typescript/dist/DeRecIdentity.js';
-import { DeRecVersion } from '@derecalliance/lib-typescript/dist/DeRecVersion.js';
-import { PairingStatus } from '@derecalliance/lib-typescript/dist/PairingStatus.js';
-import { SecretId } from '@derecalliance/lib-typescript/dist/SecretId.js';
-import { DeRecSecret } from '@derecalliance/lib-typescript/dist/DeRecSecret.js';
+// App.tsx
+import React, { useEffect, useState } from 'react';
+import { DeRecShare } from '@derecalliance/lib-typescript/dist/DeRecShare.js'; // Import DeRecShare
 
+const App: React.FC = () => {
+  // State to store the result from DeRecShare
+  const [result, setResult] = useState<any>(null);
 
-function App() {
-  const [secret, setSecret] = useState<DeRecSecret | null>(null);
+  useEffect(() => {
+    const testDeRecShare = async () => {
+      try {
+        // Initialize DeRecShare or call a method from it
+        const deRecShareInstance = new DeRecShare();
 
-  const createSecret = () => {
-    // If SecretId is a string type, use type assertion:
-    const secretId: SecretId = "test-id" as SecretId;  
-    const newSecret = new DeRecSecret(secretId, "Test Secret", new Uint8Array([4, 5, 6]));
+        // Call a method from DeRecShare (adjust this according to actual methods available)
+        // Example: const response = await deRecShareInstance.someMethod();
+        const response = await deRecShareInstance.someMethod(); // Replace with actual method name
 
-    console.log("Secret created:", newSecret);
-    setSecret(newSecret);
-  };
+        // Log the result or set it in the state
+        console.log('DeRecShare Response:', response);
+        setResult(response); // Store the response in state
+      } catch (error) {
+        console.error("Error with DeRecShare:", error);
+      }
+    };
+
+    // Call the function on component mount
+    testDeRecShare();
+  }, []); // Empty dependency array to run on component mount
 
   return (
     <div>
-      <h1>DeRec Secret Manager</h1>
-      <button onClick={createSecret}>Create Secret</button>
-      {secret && <p>Secret Created: {secret.getDescription()}</p>}
+      <h1>Test DeRecShare</h1>
+      <p>Result: {result ? JSON.stringify(result) : 'Loading...'}</p>
     </div>
   );
-}
+};
 
 export default App;
